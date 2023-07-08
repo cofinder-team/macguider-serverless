@@ -1,0 +1,14 @@
+service: serverless
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-northeast-2
+  stage: dev
+
+functions:
+  test:
+    handler: handler.run
+    events:
+      - schedule: cron(* * * * ? *)
