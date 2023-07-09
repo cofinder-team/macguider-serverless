@@ -1,11 +1,11 @@
 service: serverless
-frameworkVersion: "3"
 
 package:
   individually: true
 
 plugins:
   - serverless-plugin-typescript
+  - serverless-offline
 
 provider:
   name: aws
