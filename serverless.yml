@@ -7,10 +7,16 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
 
+custom:
+  env: ${file(./.env.${opt:stage, 'dev'}.json)}
+
 provider:
   name: aws
   runtime: nodejs18.x
   region: ap-northeast-2
+  stage: ${opt:stage, 'dev'}
+  environment:
+    TEST_KEY: ${self:custom.env.TEST_KEY}
 
 functions:
   test:

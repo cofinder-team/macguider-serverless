@@ -7,3 +7,7 @@ jspm_packages
 
 # compile target directories
 .build
+
+# environment file
+.env.dev.json
+.env.prod.json
