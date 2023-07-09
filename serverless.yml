@@ -11,7 +11,6 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: ap-northeast-2
-  stage: dev
 
 functions:
   test:
