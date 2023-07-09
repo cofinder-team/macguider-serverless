@@ -22,7 +22,11 @@ provider:
       - ${self:custom.env.SUBNET_ID}
   timeout: 900
   environment:
-    TEST_KEY: ${self:custom.env.TEST_KEY}
+    DB_HOST: ${self:custom.env.DB_HOST}
+    DB_PORT: ${self:custom.env.DB_PORT}
+    DB_USERNAME: ${self:custom.env.DB_USERNAME}
+    DB_PASSWORD: ${self:custom.env.DB_PASSWORD}
+    DB_DATABASE: ${self:custom.env.DB_DATABASE}
 
 functions:
   test:

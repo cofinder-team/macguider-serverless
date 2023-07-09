@@ -11,7 +11,10 @@
     "strictNullChecks": true,
     "noImplicitReturns": true,
     "preserveConstEnums": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
   },
   "include": ["./src"],
   "exclude": ["node_modules", "build"]
