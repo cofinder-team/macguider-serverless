@@ -27,6 +27,7 @@ provider:
     DB_USERNAME: ${self:custom.env.DB_USERNAME}
     DB_PASSWORD: ${self:custom.env.DB_PASSWORD}
     DB_DATABASE: ${self:custom.env.DB_DATABASE}
+    NODE_ENV: ${opt:stage, 'dev'}
 
 functions:
   test:

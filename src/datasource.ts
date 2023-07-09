@@ -11,5 +11,8 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: false,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: [],
+  entities: [
+    (process.env.NODE_ENV === 'prod' ? '/var/task' : '.build') +
+      '/**/*.entity.{ts,js}',
+  ],
 });
