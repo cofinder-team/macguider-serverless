@@ -20,6 +20,7 @@ provider:
       - ${self:custom.env.SG_ID}
     subnetIds:
       - ${self:custom.env.SUBNET_ID}
+  timeout: 900
   environment:
     TEST_KEY: ${self:custom.env.TEST_KEY}
 
