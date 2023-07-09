@@ -15,6 +15,11 @@ provider:
   runtime: nodejs18.x
   region: ap-northeast-2
   stage: ${opt:stage, 'dev'}
+  vpc:
+    securityGroupIds:
+      - ${self:custom.env.SG_ID}
+    subnetIds:
+      - ${self:custom.env.SUBNET_ID}
   environment:
     TEST_KEY: ${self:custom.env.TEST_KEY}
 

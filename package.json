@@ -2,11 +2,7 @@
   "name": "serverless",
   "version": "1.0.0",
   "description": "",
-  "dependencies": {
-    "aws-sdk": "^2.848.0",
-    "uuid": "^8.3.2",
-    "validate.js": "^0.13.1"
-  },
+  "dependencies": {},
   "scripts": {
     "preinstall": "npm i -g serverless",
     "deploy": "sls deploy --stage prod",
