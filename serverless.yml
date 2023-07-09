@@ -1,6 +1,12 @@
 service: serverless
 frameworkVersion: "3"
 
+package:
+  individually: true
+
+plugins:
+  - serverless-plugin-typescript
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -9,6 +15,6 @@ provider:
 
 functions:
   test:
-    handler: handler.run
+    handler: src/handler.run
     events:
       - schedule: cron(* * * * ? *)
