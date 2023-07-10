@@ -30,7 +30,7 @@ provider:
     NODE_ENV: ${opt:stage, 'dev'}
 
 functions:
-  test:
-    handler: src/handler.run
+  collect-coupang:
+    handler: src/handler.collectCoupangHandler
     events:
       - schedule: cron(* * * * ? *)

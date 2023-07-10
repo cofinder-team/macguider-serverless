@@ -1,6 +1,6 @@
 import { Handler, Context, ScheduledEvent } from 'aws-lambda';
 import { Database } from './datasource';
-import { DataSource } from 'typeorm';
+import { collectCoupang } from './run';
 
 const database = new Database();
 
@@ -12,12 +12,13 @@ const setContext = (context: Context) => {
   context.callbackWaitsForEmptyEventLoop = false;
 };
 
-const run: Handler = async (event: ScheduledEvent, context: Context) => {
+const collectCoupangHandler: Handler = async (
+  event: ScheduledEvent,
+  context: Context,
+) => {
   logEvent(event);
   setContext(context);
-
-  const dataSource: DataSource = await database.getDataSource();
-  console.log(dataSource);
+  collectCoupang(database);
 };
 
-export { run };
+export { collectCoupangHandler };
