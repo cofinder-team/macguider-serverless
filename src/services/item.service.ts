@@ -1,4 +1,4 @@
-import { DataSource, Raw, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Item } from '../entities/item.entity';
 
 export class ItemService {
