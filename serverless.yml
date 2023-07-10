@@ -33,4 +33,4 @@ functions:
   collect-coupang:
     handler: src/handler.collectCoupangHandler
     events:
-      - schedule: cron(* * * * ? *)
+      - schedule: cron(0 * * * ? *)
