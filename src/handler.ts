@@ -1,18 +1,23 @@
-import { Handler, Context, APIGatewayProxyEvent } from 'aws-lambda';
-import { AppDataSource } from './datasource';
+import { Handler, Context, ScheduledEvent } from 'aws-lambda';
+import { Database } from './datasource';
 import { DataSource } from 'typeorm';
 
-const run: Handler = async (event: APIGatewayProxyEvent, context: Context) => {
-  context.callbackWaitsForEmptyEventLoop = false;
-  console.log('Event: ', event);
+const database = new Database();
 
-  try {
-    const dataSource: DataSource = await AppDataSource.initialize();
-    console.log('datasource initialized');
-    dataSource.destroy();
-  } catch (error) {
-    throw error;
-  }
+const logEvent = (event: ScheduledEvent) => {
+  console.log('Event: ', event);
+};
+
+const setContext = (context: Context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+};
+
+const run: Handler = async (event: ScheduledEvent, context: Context) => {
+  logEvent(event);
+  setContext(context);
+
+  const dataSource: DataSource = await database.getDataSource();
+  console.log(dataSource);
 };
 
 export { run };

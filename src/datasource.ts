@@ -1,7 +1,7 @@
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-export const AppDataSource = new DataSource({
+const options: DataSourceOptions = {
   type: 'postgres',
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
@@ -15,4 +15,20 @@ export const AppDataSource = new DataSource({
     (process.env.NODE_ENV === 'prod' ? '/var/task' : '.build') +
       '/**/*.entity.{ts,js}',
   ],
-});
+};
+
+export class Database {
+  dataSource: DataSource;
+
+  initalizeDataSource = async () => {
+    if (!this.dataSource?.isInitialized) {
+      this.dataSource = await new DataSource(options).initialize();
+      console.log('Datasource initialized');
+    }
+  };
+
+  getDataSource = async () => {
+    await this.initalizeDataSource();
+    return this.dataSource;
+  };
+}
