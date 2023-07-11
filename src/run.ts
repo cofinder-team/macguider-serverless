@@ -12,8 +12,7 @@ const collectCoupang = async (database: Database) => {
 
   const items = await itemService.getTargetItems();
   const prices: CoupangPriceDto[] = await collectPrice(items);
-  await coupangService.saveCoupangPrices(prices);
-  console.log('successfully updated');
+  return coupangService.saveCoupangPrices(prices);
 };
 
 export { collectCoupang };
