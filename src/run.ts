@@ -4,7 +4,7 @@ import { CoupangService, ItemService } from './services';
 import { CoupangPriceDto } from './dtos';
 import { collectPrice } from './lib/coupang/collect';
 
-const collectCoupang = async (database: Database) => {
+const collectCoupang = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
 
   const itemService: ItemService = new ItemService(dataSource);

@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, InsertResult, Repository } from 'typeorm';
 import { CoupangLog } from '../entities';
 import { CoupangPriceDto } from '../dtos';
 
@@ -9,7 +9,9 @@ export class CoupangService {
     this.coupangLogRepository = dataSource.getRepository(CoupangLog);
   }
 
-  saveCoupangPrices = async (coupangLogs: CoupangPriceDto[]): Promise<void> => {
-    this.coupangLogRepository.insert(coupangLogs);
+  saveCoupangPrices = async (
+    coupangLogs: CoupangPriceDto[],
+  ): Promise<InsertResult> => {
+    return this.coupangLogRepository.insert(coupangLogs);
   };
 }

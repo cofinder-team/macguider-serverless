@@ -8,19 +8,21 @@ const database = new Database();
 const runWithLogging = async (
   event: unknown,
   context: Context,
-  func: (database: Database) => Promise<void>,
-) => {
+  func: (database: Database) => Promise<unknown>,
+): Promise<void> => {
   console.log('Event: ', event);
   context.callbackWaitsForEmptyEventLoop = false;
 
   const start: Date = new Date();
-  await func(database)
-    .then(async () => {
+  return func(database)
+    .then(async (result) => {
+      console.log(result);
+
       const end: Date = new Date();
       const duration: number = end.getTime() - start.getTime();
 
       const { functionName } = context;
-      await sendLogToSlack(
+      return sendLogToSlack(
         `Lambda function successfully executed\nFunctionName: ${functionName}\nDuration: ${duration}ms`,
       );
     })

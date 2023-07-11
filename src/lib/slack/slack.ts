@@ -1,9 +1,10 @@
-import request from 'request';
+import request from 'request-promise-native';
 
 const slackWebhookUrl: string = process.env.SLACK_WEBHOOK_URL ?? '';
 
 export const sendLogToSlack = async (text: string) => {
-  return request.post({
+  await request({
+    method: 'POST',
     url: slackWebhookUrl,
     body: {
       channel: 'logs',
