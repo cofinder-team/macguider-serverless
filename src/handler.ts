@@ -1,7 +1,7 @@
 import { Handler, Context, ScheduledEvent } from 'aws-lambda';
 import { Database } from './datasource';
-import { collectCoupang } from './run';
-import { sendLogToSlack } from './lib/slack/slack';
+import { checkServerStatus, collectCoupang } from './run';
+import { sendErrorToSlack, sendLogToSlack } from './lib/slack/slack';
 
 const database = new Database();
 
@@ -28,7 +28,7 @@ const runWithLogging = async (
     })
     .catch(async (error) => {
       console.log(error);
-      return sendLogToSlack(`Lambda function failed\nError: ${error}`);
+      return sendErrorToSlack(`Lambda function failed\nError: ${error}`);
     });
 };
 
@@ -39,4 +39,11 @@ const collectCoupangHandler: Handler = async (
   return runWithLogging(event, context, collectCoupang);
 };
 
-export { collectCoupangHandler };
+const checkServerStatusHandler: Handler = async (
+  event: ScheduledEvent,
+  context: Context,
+) => {
+  return runWithLogging(event, context, checkServerStatus);
+};
+
+export { collectCoupangHandler, checkServerStatusHandler };
