@@ -35,3 +35,7 @@ functions:
     handler: src/handler.collectCoupangHandler
     events:
       - schedule: cron(0 * * * ? *)
+  check-server-status:
+    handler: src/handler.checkServerStatusHandler
+    events:
+      - schedule: cron(*/5 * * * ? *)
