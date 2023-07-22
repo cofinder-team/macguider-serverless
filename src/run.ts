@@ -28,15 +28,22 @@ const checkServerStatus = async (): Promise<unknown> => {
     servers.map(async (server) => {
       fetch(server)
         .then((response) => {
-          response?.status !== 200
-            ? sendErrorToSlack(
-                `Server is Not Working!\nServer: ${server}, Status: ${response?.status}`,
-              )
-            : null;
+          if (response?.status !== 200) {
+            console.log(response);
+            return sendErrorToSlack(
+              `Server is Not Working!\nServer: ${server}, Response: ${JSON.stringify(
+                response,
+              )}`,
+            );
+          }
+          return null;
         })
         .catch((error) => {
+          console.log(error);
           sendErrorToSlack(
-            `Server is Not Working!\nServer: ${server}\nError: ${error}`,
+            `Server is Not Working!\nServer: ${server}\nError: ${JSON.stringify(
+              error,
+            )}`,
           );
         });
     }),
