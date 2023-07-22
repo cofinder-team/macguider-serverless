@@ -23,29 +23,47 @@ const checkServerStatus = async (): Promise<unknown> => {
     'https://dev.macguider.io',
     'https://api.macguider.io',
     'https://dev-api.macguider.io',
+    'https://scrapy.macguider.io',
   ];
 
   return Promise.all(
     servers.map(async (server) => {
-      fetch(server)
-        .then((response) => {
+      const start = new Date();
+
+      return fetch(server)
+        .then(async (response) => {
+          const end = new Date();
+          const duration = end.getTime() - start.getTime();
+
+          const { status, statusText } = response;
+          const body = await response.json().catch(() => '');
+          const log = { status, statusText, body };
+
           if (response?.status !== 200) {
-            console.log(response);
-            return sendErrorToSlack(
-              `Server is Not Working!\nServer: ${server}, Response: ${JSON.stringify(
-                response,
+            await sendErrorToSlack(
+              `Server is Not Working!\nServer: ${server}, Duration: ${duration}ms, Response: ${JSON.stringify(
+                log,
               )}`,
             );
           }
-          return null;
+
+          if (duration > 100) {
+            await sendErrorToSlack(
+              `Server is Slow!\nServer: ${server}, Duration: ${duration}ms, Response: ${JSON.stringify(
+                log,
+              )}`,
+            );
+          }
+
+          return log;
         })
-        .catch((error) => {
-          console.log(error);
-          sendErrorToSlack(
+        .catch(async (error) => {
+          await sendErrorToSlack(
             `Server is Not Working!\nServer: ${server}\nError: ${JSON.stringify(
               error,
             )}`,
           );
+          return error;
         });
     }),
   );
