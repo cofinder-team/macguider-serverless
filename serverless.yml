@@ -39,3 +39,8 @@ functions:
     handler: src/handler.checkServerStatusHandler
     events:
       - schedule: cron(*/5 * * * ? *)
+  check-infrastructure:
+    handler: src/handler.checkInfrastructureHandler
+    events:
+      - sns:
+          arn: arn:aws:sns:ap-northeast-2:${self:custom.env.ACCOUNT_ID}:infrastructure
