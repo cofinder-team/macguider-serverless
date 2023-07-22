@@ -47,7 +47,7 @@ const checkServerStatus = async (): Promise<unknown> => {
             );
           }
 
-          if (duration > 100) {
+          if (duration > 500) {
             await sendErrorToSlack(
               `Server is Slow!\nServer: ${server}, Duration: ${duration}ms, Response: ${JSON.stringify(
                 log,
