@@ -4,6 +4,7 @@ import { CoupangService, ItemService } from './services';
 import { CoupangPriceDto } from './dtos';
 import { collectPrice } from './lib/coupang/collect';
 import { sendErrorToSlack } from './lib/slack/slack';
+import { SNSEvent } from 'aws-lambda';
 
 const collectCoupang = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
@@ -50,4 +51,14 @@ const checkServerStatus = async (): Promise<unknown> => {
   );
 };
 
-export { collectCoupang, checkServerStatus };
+const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
+  console.log(event);
+
+  const text = event?.Records?.map((record) =>
+    JSON.stringify(record?.Sns),
+  ).join('\n');
+
+  return sendErrorToSlack(text);
+};
+
+export { collectCoupang, checkServerStatus, checkInfrastructure };
