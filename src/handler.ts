@@ -1,6 +1,6 @@
-import { Handler, Context, ScheduledEvent } from 'aws-lambda';
+import { Handler, Context, ScheduledEvent, SNSEvent } from 'aws-lambda';
 import { Database } from './datasource';
-import { checkServerStatus, collectCoupang } from './run';
+import { checkServerStatus, collectCoupang, checkInfrastructure } from './run';
 import { sendErrorToSlack, sendLogToSlack } from './lib/slack/slack';
 
 const database = new Database();
@@ -46,4 +46,15 @@ const checkServerStatusHandler: Handler = async (
   return runWithLogging(event, context, checkServerStatus);
 };
 
-export { collectCoupangHandler, checkServerStatusHandler };
+const checkInfrastructureHandler: Handler = async (
+  event: SNSEvent,
+  context: Context,
+) => {
+  context.callbackWaitsForEmptyEventLoop = false;
+  return checkInfrastructure(event);
+};
+export {
+  collectCoupangHandler,
+  checkServerStatusHandler,
+  checkInfrastructureHandler,
+};
