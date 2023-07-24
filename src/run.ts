@@ -26,45 +26,66 @@ const checkServerStatus = async (): Promise<unknown> => {
     'https://scrapy.macguider.io',
   ];
 
+  const slowDuration = 100; // ms
+
+  const fetchServer = async (
+    server: string,
+  ): Promise<{
+    duration: number;
+    type: 'success' | 'error' | 'slow';
+    log: string;
+    msg: string;
+  }> => {
+    const start = new Date();
+
+    return fetch(server)
+      .then(async (response) => {
+        const end = new Date();
+        const duration = end.getTime() - start.getTime();
+
+        const { status, statusText } = response;
+        const type: 'success' | 'error' | 'slow' =
+          status !== 200
+            ? 'error'
+            : duration > slowDuration
+            ? 'slow'
+            : 'success';
+        const body = await response.json().catch(() => '');
+
+        const log = JSON.stringify({ response });
+        const msg = JSON.stringify({ status, statusText, body });
+
+        return { duration, type, log, msg };
+      })
+      .catch(async (error) => {
+        const end = new Date();
+        const duration = end.getTime() - start.getTime();
+
+        const type = 'error';
+
+        const log = JSON.stringify({ error });
+        const msg = JSON.stringify({ error });
+
+        return { duration, type, log, msg };
+      });
+  };
+
   return Promise.all(
     servers.map(async (server) => {
-      const start = new Date();
+      const { duration, type, log, msg } = await fetchServer(server).then(
+        async (result) =>
+          result.type === 'slow' ? fetchServer(server) : result,
+      );
 
-      return fetch(server)
-        .then(async (response) => {
-          const end = new Date();
-          const duration = end.getTime() - start.getTime();
-
-          const { status, statusText } = response;
-          const body = await response.json().catch(() => '');
-          const log = { status, statusText, body };
-
-          if (response?.status !== 200) {
-            await sendErrorToSlack(
-              `Server is Not Working!\nServer: ${server}, Duration: ${duration}ms, Response: ${JSON.stringify(
-                log,
-              )}`,
-            );
-          }
-
-          if (duration > 500) {
-            await sendErrorToSlack(
-              `Server is Slow!\nServer: ${server}, Duration: ${duration}ms, Response: ${JSON.stringify(
-                log,
-              )}`,
-            );
-          }
-
-          return log;
-        })
-        .catch(async (error) => {
+      switch (type) {
+        case 'slow':
+        case 'error':
           await sendErrorToSlack(
-            `Server is Not Working!\nServer: ${server}\nError: ${JSON.stringify(
-              error,
-            )}`,
+            `Server ${type}: ${server}\n${duration}\n${msg}`,
           );
-          return error;
-        });
+      }
+
+      return { server, duration, log };
     }),
   );
 };
@@ -72,10 +93,7 @@ const checkServerStatus = async (): Promise<unknown> => {
 const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
   console.log(event);
 
-  const text = event?.Records?.map((record) =>
-    JSON.stringify(record?.Sns),
-  ).join('\n');
-
+  const text = event?.Records?.map((rcd) => rcd?.Sns?.Subject ?? '').join('\n');
   return sendErrorToSlack(text);
 };
 
