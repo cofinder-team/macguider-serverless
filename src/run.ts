@@ -55,7 +55,7 @@ const checkServerStatus = async (): Promise<unknown> => {
             );
           }
 
-          return log;
+          return JSON.stringify({ server, log, duration });
         })
         .catch(async (error) => {
           await sendErrorToSlack(
@@ -63,7 +63,7 @@ const checkServerStatus = async (): Promise<unknown> => {
               error,
             )}`,
           );
-          return error;
+          return JSON.stringify({ server, error });
         });
     }),
   );
@@ -72,10 +72,7 @@ const checkServerStatus = async (): Promise<unknown> => {
 const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
   console.log(event);
 
-  const text = event?.Records?.map((record) =>
-    JSON.stringify(record?.Sns),
-  ).join('\n');
-
+  const text = event?.Records?.map((rcd) => rcd?.Sns?.Subject ?? '').join('\n');
   return sendErrorToSlack(text);
 };
 
