@@ -34,7 +34,6 @@ const checkServerStatus = async (): Promise<unknown> => {
     duration: number;
     type: 'success' | 'error' | 'slow';
     log: string;
-    msg: string;
   }> => {
     const start = new Date();
 
@@ -50,29 +49,26 @@ const checkServerStatus = async (): Promise<unknown> => {
             : duration > slowDuration
             ? 'slow'
             : 'success';
-        const body = await response.json().catch(() => '');
 
-        const log = JSON.stringify({ response });
-        const msg = JSON.stringify({ status, statusText, body });
+        const body = await response.json().catch(() => new Object());
+        const log = JSON.stringify({ status, statusText, body });
 
-        return { duration, type, log, msg };
+        return { duration, type, log };
       })
       .catch(async (error) => {
         const end = new Date();
         const duration = end.getTime() - start.getTime();
 
         const type = 'error';
-
         const log = JSON.stringify({ error });
-        const msg = JSON.stringify({ error });
 
-        return { duration, type, log, msg };
+        return { duration, type, log };
       });
   };
 
   return Promise.all(
     servers.map(async (server) => {
-      const { duration, type, log, msg } = await fetchServer(server).then(
+      const { duration, type, log } = await fetchServer(server).then(
         async (result) =>
           result.type === 'slow' ? fetchServer(server) : result,
       );
@@ -81,7 +77,7 @@ const checkServerStatus = async (): Promise<unknown> => {
         case 'slow':
         case 'error':
           await sendErrorToSlack(
-            `Server ${type}: ${server}\n${duration}\n${msg}`,
+            `Server ${type}: ${server}\nDuration: ${duration}ms\n${log}`,
           );
       }
 
