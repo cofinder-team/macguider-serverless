@@ -28,6 +28,10 @@ provider:
     DB_PASSWORD: ${self:custom.env.DB_PASSWORD}
     DB_DATABASE: ${self:custom.env.DB_DATABASE}
     SLACK_WEBHOOK_URL: ${self:custom.env.SLACK_WEBHOOK_URL}
+    MAIL_HOST: ${self:custom.env.MAIL_HOST}
+    MAIL_PORT: ${self:custom.env.MAIL_PORT}
+    MAIL_AUTH_USER: ${self:custom.env.MAIL_AUTH_USER}
+    MAIL_AUTH_PASS: ${self:custom.env.MAIL_AUTH_PASS}
     NODE_ENV: ${opt:stage, 'dev'}
 
 functions:
