@@ -9,6 +9,8 @@
     "offline": "sls offline start --stage dev"
   },
   "dependencies": {
+    "handlebars": "^4.7.8",
+    "nodemailer": "^6.9.4",
     "pg": "^8.11.1",
     "reflect-metadata": "^0.1.13",
     "request-promise-native": "^1.0.9",
@@ -17,6 +19,7 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.119",
+    "@types/nodemailer": "^6.4.9",
     "@types/request-promise-native": "^1.0.18",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
