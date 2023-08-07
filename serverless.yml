@@ -2,6 +2,8 @@ service: serverless
 
 package:
   individually: true
+  include:
+    - src/assets/**
 
 plugins:
   - serverless-plugin-typescript
