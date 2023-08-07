@@ -1,5 +1,8 @@
 import { Transporter, createTransport } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { join } from 'path';
+import fs from 'fs';
+import Handlebars from 'handlebars';
 import Mail from 'nodemailer/lib/mailer';
 
 export class MailService {
@@ -22,7 +25,23 @@ export class MailService {
     this.transporter = createTransport(options, defaults);
   }
 
-  async sendMail(options: Mail.Options) {
-    return this.transporter.sendMail(options);
+  private createTemplate = (name: string) => {
+    const path = join(__dirname, `../assets/templates/pages/${name}.hbs`);
+    const source = fs.readFileSync(path, 'utf8');
+
+    return Handlebars.compile(source);
+  };
+
+  async sendMail(
+    options: Mail.Options & {
+      template: string;
+      context: unknown;
+    },
+  ) {
+    const { template: path, context: data, ...rest } = options;
+    const template: HandlebarsTemplateDelegate = this.createTemplate(path);
+    const html: string = template(data);
+
+    return this.transporter.sendMail({ ...rest, html });
   }
 }
