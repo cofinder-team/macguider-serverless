@@ -13,6 +13,7 @@ import { collectPrice } from './lib/coupang/collect';
 import { sendErrorToSlack } from './lib/slack/slack';
 import { SNSEvent } from 'aws-lambda';
 import { AlertTarget, Deal } from './entities';
+import delay from './lib/util/delay';
 
 const collectCoupang = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
@@ -103,30 +104,51 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
   const alertService: AlertService = new AlertService(dataSource);
 
   const deals = await dealService.getTargetDeals();
-  return Promise.all(
-    deals.map(async (deal: Deal): Promise<unknown> => {
-      const { id, item, type, itemId, sold, price, unused } = deal;
-      dealService.setAlerted(id);
+  return await deals.reduce(
+    async (promise: Promise<unknown[]>, deal: Deal): Promise<unknown[]> => {
+      const collection = await promise;
+      await delay(100);
 
-      if (sold) return [];
-      if (!item) return [];
+      const result = await (async (): Promise<unknown[]> => {
+        const { id, item, type, itemId, sold, price, unused } = deal;
+        dealService.setAlerted(id);
 
-      const priceOptions = { type, id: itemId, unused };
-      const priceTrade = await priceService.getRecentTradePrice(priceOptions);
-      if (!priceTrade) return [];
+        if (sold) return [];
+        if (!item) return [];
 
-      const { average } = priceTrade;
-      if (average === null || price > average) return [];
+        const priceOptions = { type, id: itemId, unused };
+        const priceTrade = await priceService.getRecentTradePrice(priceOptions);
+        if (!priceTrade) return [];
 
-      const alertOptions = { type, itemId, unused };
-      const alertTargets = await alertService.getAlertTargets(alertOptions);
+        const { average } = priceTrade;
+        if (average === null || price > average) return [];
 
-      return Promise.all(
-        alertTargets.map((alertTarget: AlertTarget) => {
-          return mailService.sendDealAlertMail(deal, priceTrade, alertTarget);
-        }),
-      );
-    }),
+        const alertOptions = { type, itemId, unused };
+        const alertTargets = await alertService.getAlertTargets(alertOptions);
+
+        return alertTargets.reduce(
+          async (
+            promise: Promise<unknown[]>,
+            alertTarget: AlertTarget,
+          ): Promise<unknown[]> => {
+            const collection = await promise;
+            await delay(100);
+
+            const result = await mailService.sendDealAlertMail(
+              deal,
+              priceTrade,
+              alertTarget,
+            );
+
+            return [...collection, result];
+          },
+          Promise.resolve([]),
+        );
+      })();
+
+      return [...collection, result];
+    },
+    Promise.resolve([]),
   );
 };
 
