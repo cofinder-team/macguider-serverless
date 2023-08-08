@@ -1,6 +1,11 @@
 import { DataSource } from 'typeorm';
 import { Database } from './datasource';
-import { CoupangService, DealService, ItemService } from './services';
+import {
+  CoupangService,
+  DealService,
+  ItemService,
+  PriceService,
+} from './services';
 import { CoupangPriceDto } from './dtos';
 import { collectPrice } from './lib/coupang/collect';
 import { sendErrorToSlack } from './lib/slack/slack';
@@ -91,15 +96,23 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
 
   const dealService: DealService = new DealService(dataSource);
+  const priceService: PriceService = new PriceService(dataSource);
 
   const deals = await dealService.getTargetDeals();
   return Promise.all(
     deals.map(async (deal: Deal): Promise<unknown> => {
-      const { id, item, sold } = deal;
+      const { id, item, type, itemId, sold, price, unused } = deal;
       dealService.setAlerted(id);
 
       if (sold) return [];
       if (!item) return [];
+
+      const priceOptions = { type, id: itemId, unused };
+      const priceTrade = await priceService.getRecentTradePrice(priceOptions);
+      if (!priceTrade) return [];
+
+      const { average } = priceTrade;
+      if (average === null || price > average) return [];
 
       return;
     }),
