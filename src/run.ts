@@ -5,13 +5,14 @@ import {
   CoupangService,
   DealService,
   ItemService,
+  MailService,
   PriceService,
 } from './services';
 import { CoupangPriceDto } from './dtos';
 import { collectPrice } from './lib/coupang/collect';
 import { sendErrorToSlack } from './lib/slack/slack';
 import { SNSEvent } from 'aws-lambda';
-import { Deal } from './entities';
+import { AlertTarget, Deal } from './entities';
 
 const collectCoupang = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
@@ -95,6 +96,7 @@ const checkServerStatus = async (): Promise<unknown> => {
 
 const sendDealAlert = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
+  const mailService: MailService = new MailService();
 
   const dealService: DealService = new DealService(dataSource);
   const priceService: PriceService = new PriceService(dataSource);
@@ -119,7 +121,11 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
       const alertOptions = { type, itemId, unused };
       const alertTargets = await alertService.getAlertTargets(alertOptions);
 
-      return;
+      return Promise.all(
+        alertTargets.map((alertTarget: AlertTarget) => {
+          return mailService.sendDealAlertMail(deal, priceTrade, alertTarget);
+        }),
+      );
     }),
   );
 };
