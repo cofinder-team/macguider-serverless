@@ -105,7 +105,7 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
 
   const deals = await dealService.getTargetDeals();
 
-  const callbackFn = async (deal: Deal): Promise<unknown[]> => {
+  const callbackFn = async (deal: Deal): Promise<string[]> => {
     const { id, item, type, itemId, sold, price, unused } = deal;
     dealService.setAlerted(id);
 
@@ -122,8 +122,13 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
     const alertOptions = { type, itemId, unused };
     const alertTargets = await alertService.getAlertTargets(alertOptions);
 
-    const callbackFn = async (alertTarget: AlertTarget): Promise<unknown> => {
-      return mailService.sendDealAlertMail(deal, priceTrade, alertTarget);
+    const callbackFn = async (alertTarget: AlertTarget): Promise<string> => {
+      const result = await mailService.sendDealAlertMail(
+        deal,
+        priceTrade,
+        alertTarget,
+      );
+      return JSON.stringify(result);
     };
 
     return mapSyncWithDelay(alertTargets, callbackFn, 100);
