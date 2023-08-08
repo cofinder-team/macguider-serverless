@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { Database } from './datasource';
 import {
+  AlertService,
   CoupangService,
   DealService,
   ItemService,
@@ -97,6 +98,7 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
 
   const dealService: DealService = new DealService(dataSource);
   const priceService: PriceService = new PriceService(dataSource);
+  const alertService: AlertService = new AlertService(dataSource);
 
   const deals = await dealService.getTargetDeals();
   return Promise.all(
@@ -113,6 +115,9 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
 
       const { average } = priceTrade;
       if (average === null || price > average) return [];
+
+      const alertOptions = { type, itemId, unused };
+      const alertTargets = await alertService.getAlertTargets(alertOptions);
 
       return;
     }),
