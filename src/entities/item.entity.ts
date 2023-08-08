@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Vendor } from './vendor.entity';
 import { CoupangLog } from './log/coupang.entity';
+import { Deal } from './deal.entity';
 
 @Entity({ schema: 'macguider', name: 'item' })
 export class Item extends BaseEntity {
@@ -29,4 +30,11 @@ export class Item extends BaseEntity {
     { name: 'id', referencedColumnName: 'item_id' },
   ])
   coupangLogs: CoupangLog[];
+
+  @OneToMany(() => Deal, (deal) => deal.item)
+  @JoinColumn([
+    { name: 'type', referencedColumnName: 'type' },
+    { name: 'id', referencedColumnName: 'item_id' },
+  ])
+  deals: Deal[];
 }

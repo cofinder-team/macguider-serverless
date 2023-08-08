@@ -1,10 +1,11 @@
 import { DataSource } from 'typeorm';
 import { Database } from './datasource';
-import { CoupangService, ItemService } from './services';
+import { CoupangService, DealService, ItemService } from './services';
 import { CoupangPriceDto } from './dtos';
 import { collectPrice } from './lib/coupang/collect';
 import { sendErrorToSlack } from './lib/slack/slack';
 import { SNSEvent } from 'aws-lambda';
+import { Deal } from './entities';
 
 const collectCoupang = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
@@ -89,7 +90,15 @@ const checkServerStatus = async (): Promise<unknown> => {
 const sendDealAlert = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
 
-  return;
+  const dealService: DealService = new DealService(dataSource);
+
+  const deals = await dealService.getTargetDeals();
+  return Promise.all(
+    deals.map(async (deal: Deal): Promise<unknown> => {
+      // TODO
+      return;
+    }),
+  );
 };
 
 const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
