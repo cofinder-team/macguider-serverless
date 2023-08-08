@@ -45,6 +45,10 @@ functions:
     handler: src/handler.checkServerStatusHandler
     events:
       - schedule: cron(*/5 * * * ? *)
+  send-deal-alert:
+    handler: src/handler.sendDealAlertHandler
+    events:
+      - schedule: cron(*/5 * * * ? *)
   check-infrastructure:
     handler: src/handler.checkInfrastructureHandler
     events:

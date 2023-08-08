@@ -86,6 +86,12 @@ const checkServerStatus = async (): Promise<unknown> => {
   );
 };
 
+const sendDealAlert = async (database: Database): Promise<unknown> => {
+  const dataSource: DataSource = await database.getDataSource();
+
+  return;
+};
+
 const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
   console.log(event);
 
@@ -93,4 +99,9 @@ const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
   return sendErrorToSlack(text);
 };
 
-export { collectCoupang, checkServerStatus, checkInfrastructure };
+export {
+  collectCoupang,
+  checkServerStatus,
+  sendDealAlert,
+  checkInfrastructure,
+};
