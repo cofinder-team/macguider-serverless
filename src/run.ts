@@ -95,7 +95,12 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
   const deals = await dealService.getTargetDeals();
   return Promise.all(
     deals.map(async (deal: Deal): Promise<unknown> => {
-      // TODO
+      const { id, item, sold } = deal;
+      dealService.setAlerted(id);
+
+      if (sold) return [];
+      if (!item) return [];
+
       return;
     }),
   );

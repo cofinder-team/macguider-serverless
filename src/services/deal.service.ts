@@ -19,4 +19,8 @@ export class DealService {
     const relations: FindOptionsRelations<Deal> = { item: {} };
     return this.dealRepository.find({ where, relations });
   }
+
+  async setAlerted(id: number) {
+    this.dealRepository.update(id, { alertedAt: new Date() });
+  }
 }
