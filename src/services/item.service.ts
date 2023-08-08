@@ -2,7 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Item } from '../entities/item.entity';
 
 export class ItemService {
-  itemRepository: Repository<Item>;
+  private itemRepository: Repository<Item>;
 
   constructor(dataSource: DataSource) {
     this.itemRepository = dataSource.getRepository(Item);

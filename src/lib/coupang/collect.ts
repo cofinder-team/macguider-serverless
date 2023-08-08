@@ -1,6 +1,6 @@
 import { CoupangPriceDto } from '../../dtos';
 import { Item, Vendor } from '../../entities';
-import delay from '../util/delay';
+import { delay } from '../util/delay';
 
 const headers = {
   'User-Agent':
