@@ -2,6 +2,8 @@ service: serverless
 
 package:
   individually: true
+  include:
+    - src/assets/**
 
 plugins:
   - serverless-plugin-typescript
@@ -28,6 +30,10 @@ provider:
     DB_PASSWORD: ${self:custom.env.DB_PASSWORD}
     DB_DATABASE: ${self:custom.env.DB_DATABASE}
     SLACK_WEBHOOK_URL: ${self:custom.env.SLACK_WEBHOOK_URL}
+    MAIL_HOST: ${self:custom.env.MAIL_HOST}
+    MAIL_PORT: ${self:custom.env.MAIL_PORT}
+    MAIL_AUTH_USER: ${self:custom.env.MAIL_AUTH_USER}
+    MAIL_AUTH_PASS: ${self:custom.env.MAIL_AUTH_PASS}
     NODE_ENV: ${opt:stage, 'dev'}
 
 functions:
@@ -37,6 +43,10 @@ functions:
       - schedule: cron(0 * * * ? *)
   check-server-status:
     handler: src/handler.checkServerStatusHandler
+    events:
+      - schedule: cron(*/5 * * * ? *)
+  send-deal-alert:
+    handler: src/handler.sendDealAlertHandler
     events:
       - schedule: cron(*/5 * * * ? *)
   check-infrastructure:

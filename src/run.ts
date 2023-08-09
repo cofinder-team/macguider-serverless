@@ -1,10 +1,20 @@
 import { DataSource } from 'typeorm';
 import { Database } from './datasource';
-import { CoupangService, ItemService } from './services';
+import {
+  AlertService,
+  CoupangService,
+  DealService,
+  ItemService,
+  MailService,
+  PriceService,
+} from './services';
 import { CoupangPriceDto } from './dtos';
 import { collectPrice } from './lib/coupang/collect';
 import { sendErrorToSlack } from './lib/slack/slack';
 import { SNSEvent } from 'aws-lambda';
+import { AlertTarget, Deal } from './entities';
+import { mapSyncWithDelay } from './lib/util/delay';
+import { generateAlertPayload } from './lib/alert/payload';
 
 const collectCoupang = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
@@ -86,6 +96,46 @@ const checkServerStatus = async (): Promise<unknown> => {
   );
 };
 
+const sendDealAlert = async (database: Database): Promise<unknown> => {
+  const dataSource: DataSource = await database.getDataSource();
+  const mailService: MailService = new MailService();
+
+  const dealService: DealService = new DealService(dataSource);
+  const priceService: PriceService = new PriceService(dataSource);
+  const alertService: AlertService = new AlertService(dataSource);
+
+  const deals = await dealService.getTargetDeals();
+
+  const callbackFn = async (deal: Deal): Promise<string[]> => {
+    const { id, item, type, itemId, sold, price, unused } = deal;
+    dealService.setAlerted(id);
+
+    if (sold) return [];
+    if (!item) return [];
+
+    const priceOptions = { type, id: itemId, unused };
+    const priceTrade = await priceService.getRecentTradePrice(priceOptions);
+    if (!priceTrade) return [];
+
+    const { average } = priceTrade;
+    if (average === null || price > average) return [];
+
+    const alertOptions = { type, itemId, unused };
+    const alertTargets = await alertService.getAlertTargets(alertOptions);
+
+    const callbackFn = async (alertTarget: AlertTarget): Promise<string> => {
+      const payload = generateAlertPayload(deal, priceTrade, alertTarget);
+
+      const result = await mailService.sendDealAlertMail(payload);
+      return JSON.stringify(result);
+    };
+
+    return mapSyncWithDelay(alertTargets, callbackFn, 100);
+  };
+
+  return mapSyncWithDelay(deals, callbackFn, 100);
+};
+
 const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
   console.log(event);
 
@@ -93,4 +143,9 @@ const checkInfrastructure = async (event: SNSEvent): Promise<unknown> => {
   return sendErrorToSlack(text);
 };
 
-export { collectCoupang, checkServerStatus, checkInfrastructure };
+export {
+  collectCoupang,
+  checkServerStatus,
+  sendDealAlert,
+  checkInfrastructure,
+};
