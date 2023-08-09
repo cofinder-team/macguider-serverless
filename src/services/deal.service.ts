@@ -16,7 +16,9 @@ export class DealService {
 
   async getTargetDeals() {
     const where: FindOptionsWhere<Deal> = { alertedAt: IsNull() };
-    const relations: FindOptionsRelations<Deal> = { item: {} };
+    const relations: FindOptionsRelations<Deal> = {
+      item: { macbook: { modelEntity: {} }, ipad: { modelEntity: {} } },
+    };
     return this.dealRepository.find({ where, relations });
   }
 
