@@ -16,6 +16,9 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
+  @Column({ type: 'uuid' })
+  uuid: string;
+
   @OneToMany(() => AlertTarget, (alertTarget) => alertTarget.user)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   alertTargets: AlertTarget[];
