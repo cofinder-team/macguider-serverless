@@ -4,7 +4,7 @@ import { join } from 'path';
 import fs from 'fs';
 import Handlebars from 'handlebars';
 import Mail from 'nodemailer/lib/mailer';
-import { AlertTarget, Deal, PriceTrade } from '../entities';
+import { AlertPayload } from '../lib/alert/payload';
 
 export class MailService {
   private transporter: Transporter;
@@ -46,16 +46,13 @@ export class MailService {
     return this.transporter.sendMail({ ...rest, html });
   }
 
-  async sendDealAlertMail(
-    deal: Deal,
-    priceTrade: PriceTrade,
-    alertTarget: AlertTarget,
-  ) {
+  async sendDealAlertMail(payload: AlertPayload) {
+    const { to, ...context } = payload;
     return this.sendMail({
-      to: alertTarget.user.email,
+      to,
       subject: '[MacGuider] 새로 등록된 중고 제품을 알려드릴게요! 💎',
-      template: 'deal-alert',
-      context: { deal, priceTrade, alertTarget },
+      template: 'alert',
+      context,
     });
   }
 }

@@ -3,12 +3,15 @@ import {
   Entity,
   JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { Vendor } from './vendor.entity';
 import { CoupangLog } from './log/coupang.entity';
 import { Deal } from './deal.entity';
 import { AlertTarget } from './alert/target.entity';
+import { ItemMacbook } from './item/macbook.entity';
+import { ItemIpad } from './item/ipad.entity';
 
 @Entity({ schema: 'macguider', name: 'item' })
 export class Item extends BaseEntity {
@@ -17,6 +20,20 @@ export class Item extends BaseEntity {
 
   @PrimaryColumn()
   id: number;
+
+  @OneToOne(() => ItemMacbook, (itemMacbook) => itemMacbook.item)
+  @JoinColumn([
+    { name: 'type', referencedColumnName: 'type' },
+    { name: 'id', referencedColumnName: 'id' },
+  ])
+  macbook: ItemMacbook;
+
+  @OneToOne(() => ItemIpad, (ItemIpad) => ItemIpad.item)
+  @JoinColumn([
+    { name: 'type', referencedColumnName: 'type' },
+    { name: 'id', referencedColumnName: 'id' },
+  ])
+  ipad: ItemIpad;
 
   @OneToMany(() => Vendor, (vendor) => vendor.item)
   @JoinColumn([

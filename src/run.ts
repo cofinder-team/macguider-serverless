@@ -14,6 +14,7 @@ import { sendErrorToSlack } from './lib/slack/slack';
 import { SNSEvent } from 'aws-lambda';
 import { AlertTarget, Deal } from './entities';
 import { mapSyncWithDelay } from './lib/util/delay';
+import { generateAlertPayload } from './lib/alert/payload';
 
 const collectCoupang = async (database: Database): Promise<unknown> => {
   const dataSource: DataSource = await database.getDataSource();
@@ -123,11 +124,9 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
     const alertTargets = await alertService.getAlertTargets(alertOptions);
 
     const callbackFn = async (alertTarget: AlertTarget): Promise<string> => {
-      const result = await mailService.sendDealAlertMail(
-        deal,
-        priceTrade,
-        alertTarget,
-      );
+      const payload = generateAlertPayload(deal, priceTrade, alertTarget);
+
+      const result = await mailService.sendDealAlertMail(payload);
       return JSON.stringify(result);
     };
 
