@@ -1,7 +1,7 @@
 import { AlertTarget, Deal, Item, PriceTrade } from '../../entities';
 
 const generateSpec = (item: Item): { main: string; detail: string } => {
-  const { macbook, ipad } = item;
+  const { macbook, ipad, iphone } = item;
 
   if (macbook) {
     const { modelEntity, chip, cpu, gpu, ram, ssd } = macbook;
@@ -20,6 +20,16 @@ const generateSpec = (item: Item): { main: string; detail: string } => {
     return {
       main: `${name} ${gen}세대`,
       detail: `${cellular ? 'Wi-Fi + Cellular' : 'Wi-Fi'} (${storage})`,
+    };
+  }
+
+  if (iphone) {
+    const { modelEntity, modelSuffix, phoneStorage } = iphone;
+    const { name } = modelEntity;
+
+    return {
+      main: `${name} ${modelSuffix}`,
+      detail: `${phoneStorage}`,
     };
   }
 

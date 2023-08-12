@@ -12,6 +12,7 @@ import { Deal } from './deal.entity';
 import { AlertTarget } from './alert/target.entity';
 import { ItemMacbook } from './item/macbook.entity';
 import { ItemIpad } from './item/ipad.entity';
+import { ItemIphone } from './item/iphone.entity';
 
 @Entity({ schema: 'macguider', name: 'item' })
 export class Item extends BaseEntity {
@@ -34,6 +35,13 @@ export class Item extends BaseEntity {
     { name: 'id', referencedColumnName: 'id' },
   ])
   ipad: ItemIpad;
+
+  @OneToOne(() => ItemIphone, (ItemIphone) => ItemIphone.item)
+  @JoinColumn([
+    { name: 'type', referencedColumnName: 'type' },
+    { name: 'id', referencedColumnName: 'id' },
+  ])
+  iphone: ItemIphone;
 
   @OneToMany(() => Vendor, (vendor) => vendor.item)
   @JoinColumn([
