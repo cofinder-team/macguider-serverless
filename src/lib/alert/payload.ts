@@ -24,12 +24,12 @@ const generateSpec = (item: Item): { main: string; detail: string } => {
   }
 
   if (iphone) {
-    const { modelEntity, modelSuffix, phoneStorage } = iphone;
+    const { modelEntity, modelSuffix, storage } = iphone;
     const { name } = modelEntity;
 
     return {
       main: `${name} ${modelSuffix}`,
-      detail: `${phoneStorage}`,
+      detail: `${storage}`,
     };
   }
 
