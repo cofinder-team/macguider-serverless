@@ -6,6 +6,7 @@ import {
   Repository,
 } from 'typeorm';
 import { Deal } from '../entities';
+import { getItemDetailRelation } from '../lib/relations/item.detail.relation';
 
 export class DealService {
   private dealRepository: Repository<Deal>;
@@ -17,7 +18,7 @@ export class DealService {
   async getTargetDeals() {
     const where: FindOptionsWhere<Deal> = { alertedAt: IsNull() };
     const relations: FindOptionsRelations<Deal> = {
-      item: { macbook: { modelEntity: {} }, ipad: { modelEntity: {} } },
+      item: getItemDetailRelation({ modelEntity: {} }),
     };
     return this.dealRepository.find({ where, relations });
   }

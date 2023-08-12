@@ -2,6 +2,7 @@ import { AlertTarget } from './alert/target.entity';
 import { Deal } from './deal.entity';
 import { Item } from './item.entity';
 import { ItemIpad } from './item/ipad.entity';
+import { ItemIphone } from './item/iphone.entity';
 import { ItemMacbook } from './item/macbook.entity';
 import { CoupangLog } from './log/coupang.entity';
 import { Model } from './model.entity';
@@ -14,6 +15,7 @@ export {
   Item,
   ItemMacbook,
   ItemIpad,
+  ItemIphone,
   Model,
   CoupangLog,
   User,

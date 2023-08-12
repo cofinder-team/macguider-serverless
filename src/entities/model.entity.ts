@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn } from 'typeorm';
 import { ItemIpad } from './item/ipad.entity';
 import { ItemMacbook } from './item/macbook.entity';
+import { ItemIphone } from './item/iphone.entity';
 
 @Entity({ schema: 'macguider', name: 'model' })
 export class Model {
@@ -26,4 +27,11 @@ export class Model {
     { name: 'id', referencedColumnName: 'model' },
   ])
   ipadItems: ItemIpad[];
+
+  @OneToMany(() => ItemIphone, (iphoneItem) => iphoneItem.modelEntity)
+  @JoinColumn([
+    { name: 'type', referencedColumnName: 'type' },
+    { name: 'id', referencedColumnName: 'model' },
+  ])
+  iphoneItems: ItemIphone[];
 }
