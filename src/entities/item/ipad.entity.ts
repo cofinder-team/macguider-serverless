@@ -14,6 +14,9 @@ export class ItemIpad extends ItemDetailEntity {
   @Column()
   cellular: boolean;
 
+  @Column()
+  chip: string;
+
   @ManyToOne(() => Model, (model) => model.ipadItems)
   @JoinColumn([
     { name: 'type', referencedColumnName: 'type' },

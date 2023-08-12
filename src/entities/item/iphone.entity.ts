@@ -9,7 +9,7 @@ export class ItemIphone extends ItemDetailEntity {
   modelSuffix: string;
 
   @Column()
-  phoneStorage: string;
+  storage: string;
 
   @ManyToOne(() => Model, (model) => model.iphoneItems)
   @JoinColumn([
