@@ -4,6 +4,7 @@ import {
   FindOptionsWhere,
   IsNull,
   Repository,
+  UpdateResult,
 } from 'typeorm';
 import { Deal } from '../entities';
 import { getItemDetailRelation } from '../lib/relations/item.detail.relation';
@@ -23,7 +24,7 @@ export class DealService {
     return this.dealRepository.find({ where, relations });
   }
 
-  async setAlerted(id: number) {
-    this.dealRepository.update(id, { alertedAt: new Date() });
+  async setAlerted(id: number): Promise<UpdateResult> {
+    return this.dealRepository.update(id, { alertedAt: new Date() });
   }
 }
