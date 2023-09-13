@@ -17,7 +17,10 @@ export class DealService {
   }
 
   async getTargetDeals() {
-    const where: FindOptionsWhere<Deal> = { alertedAt: IsNull() };
+    const where: FindOptionsWhere<Deal> = {
+      alertedAt: IsNull(),
+      pending: false,
+    };
     const relations: FindOptionsRelations<Deal> = {
       item: getItemDetailRelation({ modelEntity: {} }),
     };
