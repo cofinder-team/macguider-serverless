@@ -38,6 +38,9 @@ export class Deal extends BaseEntity {
   @DeleteDateColumn()
   deletedAt: Date;
 
+  @Column({ default: false })
+  pending: boolean;
+
   @ManyToOne(() => Item, (item) => item.deals)
   @JoinColumn([
     { name: 'type', referencedColumnName: 'type' },

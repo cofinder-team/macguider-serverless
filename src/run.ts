@@ -108,7 +108,7 @@ const sendDealAlert = async (database: Database): Promise<unknown> => {
 
   const callbackFn = async (deal: Deal): Promise<string[]> => {
     const { id, item, type, itemId, sold, price, unused } = deal;
-    dealService.setAlerted(id);
+    await dealService.setAlerted(id);
 
     if (sold) return [];
     if (!item) return [];
