@@ -58,8 +58,8 @@ const getTargetPrice = async (target: Vendor): Promise<Price> => {
   }, undefined);
   if (original === undefined) return undefined;
 
-  const ccidEligible: boolean = response?.ccidEligible ?? true;
-  if (ccidEligible) return original;
+  const ccidEligible: boolean = response?.ccidEligible ?? false;
+  if (!ccidEligible) return original;
 
   const ccidPercent: number =
     response?.ccidInfo?.highestWowOnlyCcidDiscountRate ?? 0;
