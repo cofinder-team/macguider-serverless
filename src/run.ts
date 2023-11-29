@@ -32,7 +32,6 @@ const checkServerStatus = async (): Promise<unknown> => {
     'https://www.macguider.io',
     'https://dev.macguider.io',
     'https://api.macguider.io',
-    'https://dev-api.macguider.io',
     'https://scrapy.macguider.io',
   ];
 
