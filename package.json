@@ -1,7 +1,7 @@
 {
-  "name": "serverless",
-  "version": "1.0.0",
-  "description": "",
+  "name": "macguider-serverless",
+  "version": "23.11.29",
+  "description": "Serverless functions for Macguider",
   "scripts": {
     "preinstall": "npm i -g serverless",
     "deploy": "sls deploy --stage prod",
